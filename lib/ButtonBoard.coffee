@@ -1,5 +1,6 @@
 class ButtonBoard
   constructor: (elem, size) ->
+    @listeners = {}
     @container = document.createElement("div")
     elem.appendChild(@container)
     @container.classList.add("buttonBoard")
@@ -10,9 +11,9 @@ class ButtonBoard
     div.appendChild(@makeButton(column, row)) for column in [1..size]
     div
 
-  makeButton: (elem, column, row) ->
+  makeButton: (column, row) ->
     div = document.createElement("div")
-    div.addEventListener("click", @onClick.bind(self, column, row))
+    div.addEventListener("click", @onClick.bind(this, column, row))
     div
 
   onClick: (column, row) ->
@@ -24,18 +25,21 @@ class ButtonBoard
       do(row, rowNumber) ->
         @setLightState([rowNumber, columnNumber], lightState) for lightState,columnNumber in row
 
-  setLightState: ([row, column], lightState) ->
-    button = $(">:nth-child(#{row})>:nth-child(#{column})", @container)
+  setLightState: (point, lightState) ->
+    [row, column] = point
+    button = @container.children[--row].children[--column]
     if lightState
       button.classList.add("lit")
     else
       button.classList.remove("lit")
 
   on: (eventName, listener) ->
+    @listeners[eventName] ||= []
     @listeners[eventName].push(listener)
 
   emit: (eventName, others...) ->
-    listener(others) for listener in @listeners
+    @listeners[eventName] ||= []
+    listener(others) for listener in @listeners[eventName]
 
 window.ButtonBoard = ButtonBoard
 
