@@ -1,0 +1,18 @@
+body {
+  background: #333;
+  color: white;
+}
+
+.buttonBoard div div {
+  background: aliceblue;
+  border: 1px solid black;
+  display: inline-block;
+  height: 50px;
+  width: 50px;
+  margin: 1px;
+}
+
+.buttonBoard div div.lit {
+background: #ff9;
+border: 1px solid white;
+}
