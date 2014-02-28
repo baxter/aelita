@@ -14,8 +14,8 @@ class PentatonicScale
       @ratio(i)
 
   ratio: (i) ->
-    div = Math.floor(i / @ratios.length) + 1
+    div = Math.floor(i / @ratios.length)
     mod = i % @ratios.length
-    @ratios[mod] * (@base_frequency * div)
+    @ratios[mod] * (@base_frequency * Math.pow(2,div))
 
 window.PentatonicScale = PentatonicScale

@@ -1,6 +1,13 @@
+/* default: #78a300 */
+
 body {
   background: #333;
   color: white;
+  text-align: center;
+}
+
+.buttonBoard {
+  margin: 6em auto;
 }
 
 .buttonBoard div div {
@@ -15,7 +22,7 @@ body {
 }
 
 .buttonBoard div div.lit {
-  background: #ff9;
-  border: 1px solid #ff9;
-  box-shadow: 0px 0px 20px #ff9;
+  background: #daff75;
+  border: 1px solid #daff75;
+  box-shadow: 0px 0px 20px #daff75;
 }

@@ -1,4 +1,4 @@
-size = 8
+size = 16
 
 bb = new window.ButtonBoard(document.body, size)
 scale = new window.PentatonicScale()
