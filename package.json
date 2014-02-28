@@ -1,0 +1,25 @@
+{
+  "name": "y",
+  "version": "7.7.7",
+  "description": "awesome monome clone in the browser",
+  "main": "index.js",
+  "dependencies": {
+    "express": "~3.4.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/baxter/aelita.git"
+  },
+  "keywords": [
+    "nope"
+  ],
+  "author": "baxter",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/baxter/aelita/issues"
+  }
+}
