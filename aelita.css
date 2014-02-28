@@ -8,6 +8,7 @@ body {
 
 .buttonBoard {
   margin: 6em auto;
+  width: 1125px;
 }
 
 .buttonBoard div div {
