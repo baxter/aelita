@@ -16,7 +16,7 @@ setInterval(() ->
     do (row) ->
       bb.setLightState([activeColumn, row], true)
       if buttonActive([activeColumn, row])
-        playNote(gainNodes[row], 0.3)
+        playNote(gainNodes[--row], 0.3)
 , 300)
 
 buttonActive = (point) ->
