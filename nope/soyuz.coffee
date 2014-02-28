@@ -1,6 +1,7 @@
 size = 8
 
 bb = new window.ButtonBoard(document.body, size)
+scale = new window.PentatonicScale()
 
 onNotes = {};
 
@@ -33,7 +34,7 @@ playNote = (gainNode, duration) ->
 
 context = new webkitAudioContext()
 
-freqs = [261.626, 293.665, 329.628, 391.995, 440, 523.25, 587.33, 659.25]
+freqs = scale.frequencies(size).reverse()
 gainNodes = for freq in freqs
   do (freq) ->
     osc = context.createOscillator()
