@@ -13,12 +13,9 @@ class ButtonBoard
 
   makeButton: (column, row) ->
     div = document.createElement("div")
-    div.addEventListener("click", @onClick.bind(this, column, row))
+    div.addEventListener("mousedown", @emit.bind(this, "buttonDown", [column, row]))
+    div.addEventListener("mouseup", @emit.bind(this, "buttonUp", [column, row]))
     div
-
-  onClick: (column, row) ->
-    @emit("buttonDown", [column, row])
-    @emit("buttonUp", [column, row])
 
   setLightStates: (matrixOfLights) ->
     for row, rowNumber in matrixOfLights
@@ -26,12 +23,20 @@ class ButtonBoard
         @setLightState([rowNumber, columnNumber], lightState) for lightState,columnNumber in row
 
   setLightState: (point, lightState) ->
-    [row, column] = point
-    button = @container.children[--row].children[--column]
+    button = @_getButton(point)
     if lightState
       button.classList.add("lit")
     else
       button.classList.remove("lit")
+
+  getLightState: (point) ->
+    button = @_getButton(point)
+    button.classList.contains("lit")
+
+  _getButton: (point) ->
+    [column, row] = point
+    @container.children[--row].children[--column]
+
 
   on: (eventName, listener) ->
     @listeners[eventName] ||= []
@@ -39,7 +44,7 @@ class ButtonBoard
 
   emit: (eventName, others...) ->
     @listeners[eventName] ||= []
-    listener(others) for listener in @listeners[eventName]
+    listener.apply(null, others) for listener in @listeners[eventName]
 
 window.ButtonBoard = ButtonBoard
 
