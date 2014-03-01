@@ -5,8 +5,9 @@ scale = new window.PentatonicScale()
 
 onNotes = {};
 
-activeColumn = 1
-setInterval(() ->
+activeColumn = size # This is unintuitive but the tick will set the 2nd column to be active if the activeColumn is set to 1
+
+tick = ->
   for row in [1..size]
     do (row) ->
       if !buttonActive([activeColumn, row])
@@ -17,7 +18,6 @@ setInterval(() ->
       bb.setLightState([activeColumn, row], true)
       if buttonActive([activeColumn, row])
         playNote(gainNodes[--row], 0.3)
-, 300)
 
 buttonActive = (point) ->
   pointString = point.toString()
@@ -34,8 +34,7 @@ playNote = (gainNode, duration) ->
 
 context = new webkitAudioContext()
 
-freqs = scale.frequencies(size).reverse()
-gainNodes = for freq in freqs
+gainNodes = for freq in scale.frequencies(size).reverse()
   do (freq) ->
     osc = context.createOscillator()
     osc.frequency.value = freq
@@ -46,7 +45,7 @@ gainNodes = for freq in freqs
     gainNode.connect(context.destination)
     gainNode
 
-bb.on("buttonDown", (point) ->
+bb.on "buttonDown", (point) ->
   if buttonActive(point)
     onNotes[point.toString()] = false
     if activeColumn != point[0]
@@ -54,6 +53,5 @@ bb.on("buttonDown", (point) ->
   else
     onNotes[point.toString()] = true
     bb.setLightState(point, true)
-)
 
-
+setInterval tick, 300
