@@ -29,6 +29,11 @@ class ButtonBoard
     else
       button.classList.remove("lit")
 
+  getLightStates: ->
+    for row, rowNumber in @container.children
+      do(row, rowNumber) =>
+        @getLightState([rowNumber + 1, columnNumber + 1]) for lightState, columnNumber in row.children
+
   getLightState: (point) ->
     button = @_getButton(point)
     button.classList.contains("lit")
@@ -36,7 +41,6 @@ class ButtonBoard
   _getButton: (point) ->
     [column, row] = point
     @container.children[--row].children[--column]
-
 
   on: (eventName, listener) ->
     @listeners[eventName] ||= []
