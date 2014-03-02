@@ -7,13 +7,13 @@ activeColumn = size # This is unintuitive but the tick will set the 2nd column t
 
 tick = ->
   for row in [1..size]
-    btn = bb._getButton activeColumn, row
-    bb.setLightState(btn, false) unless btn._aelita.on
+    button = bb.getButton activeColumn, row
+    button.setLightState(false) unless button.on
   activeColumn = (activeColumn % size ) + 1
   for row in [1..size]
-    btn = bb._getButton activeColumn, row
-    bb.setLightState(btn, true)
-    playNote(gainNodes[row - 1], 0.3) if btn._aelita.on
+    button = bb.getButton activeColumn, row
+    button.setLightState(true)
+    playNote(gainNodes[row - 1], 0.3) if button.on
 
 playNote = (gainNode, duration) ->
   gainNode.gain.setValueAtTime(0, context.currentTime)
@@ -38,13 +38,12 @@ gainNodes = for freq in scale.frequencies(size).reverse()
     gainNode
 
 bb.on "buttonDown", (button) ->
-  if button._aelita.on
-    button._aelita.on = false
-    if activeColumn != button._aelita.column
-      bb.setLightState(button, false)
+  if button.on
+    button.on = false
+    button.setLightState false if activeColumn != button.column
   else
-    button._aelita.on = true
-    bb.setLightState(button, true)
+    button.on = true
+    button.setLightState true
   window.location.hash = bb.getEncodedLights()
 
 bb.initaliseLights window.location.hash.substring 1 if window.location.hash

@@ -1,3 +1,12 @@
+class Button
+  constructor: (@elem, @column, @row) ->
+    @on = false
+  setLightState: (lightState) ->
+    action = if lightState then "add" else "remove"
+    @elem.classList[action] "lit"
+  getLightState: ->
+    @elem.classList.contains "lit"
+
 class ButtonBoard
   constructor: (elem, @size) ->
     @listeners = {}
@@ -14,27 +23,26 @@ class ButtonBoard
 
   makeButton: (column, row) ->
     div = document.createElement("div")
-    idx = @_getButtonIndex column, row
-    div.addEventListener("mousedown", @emit.bind(this, "buttonDown", div))
-    div.addEventListener("mouseup", @emit.bind(this, "buttonUp", div))
-    div._aelita = on: false, idx: idx, row: row, column: column
-    @buttons[idx] = div
+    button = new Button(div, column, row)
+    div.addEventListener("mousedown", @emit.bind(this, "buttonDown", button))
+    div.addEventListener("mouseup", @emit.bind(this, "buttonUp", button))
+    @buttons[@getButtonIndex column, row] = button
     div
 
   getEncodedLights: ->
-    @buttons.reduce (encoded, div) ->
-      encoded += if div._aelita.on then 1 else 0
+    @buttons.reduce (encoded, button) ->
+      encoded += if button.on then 1 else 0
     , ""
 
   initaliseLights: (encodedLightStr) ->
     for l, i in encodedLightStr.split ""
-      btn = @buttons[(i % @size) + Math.floor(i / @size) * @size]
+      button = @buttons[(i % @size) + Math.floor(i / @size) * @size]
       if l == "1"
-        btn._aelita.on = true
-        btn.classList.add "lit"
+        button.on = true
+        button.elem.classList.add "lit"
       else
-        btn._aelita.on = false
-        btn.classList.remove "lit"
+        button.on = false
+        button.elem.classList.remove "lit"
     true
 
   setLightStates: (matrixOfLights) ->
@@ -42,19 +50,10 @@ class ButtonBoard
       do(row, rowNumber) ->
         @setLightState([rowNumber, columnNumber], lightState) for lightState,columnNumber in row
 
-  setLightState: (button, lightState) ->
-    if lightState
-      button.classList.add("lit")
-    else
-      button.classList.remove("lit")
+  getButton: (column, row) ->
+    @buttons[@getButtonIndex column, row]
 
-  getLightState: (button) ->
-    button.classList.contains("lit")
-
-  _getButton: (column, row) ->
-    @buttons[@_getButtonIndex column, row]
-
-  _getButtonIndex: (column, row) ->
+  getButtonIndex: (column, row) ->
     --column + --row * @size
 
   on: (eventName, listener) ->
