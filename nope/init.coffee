@@ -2,11 +2,11 @@ bb = new window.ButtonBoard(document.body, 8)
 
 
 
-bb.on("buttonDown", (point) ->
-  bb.setLightState(point, true);
+bb.on("buttonDown", (button) ->
+  button.setLightState true
 )
 
-bb.on("buttonUp", (point) ->
-  bb.setLightState(point, false);
+bb.on("buttonUp", (button) ->
+  button.setLightState false
 )
 

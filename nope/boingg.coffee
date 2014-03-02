@@ -15,7 +15,7 @@ setInterval(() ->
   for column in [1..size]
     do (column) ->
       if bounceHeights[column] > 0
-        bb.setLightState([column, currentHeights[column]], false)
+        bb.getButton(column, currentHeights[column]).setLightState(false)
         if currentDirections[column]
           currentHeights[column] += 1
         else
@@ -27,7 +27,7 @@ setInterval(() ->
         if currentHeights[column] == 0
           currentHeights[column] = 2
           currentDirections[column] = true
-        bb.setLightState([column, currentHeights[column]], true)
+        bb.getButton(column, currentHeights[column]).setLightState(true)
         if(currentHeights[column] == 1)
           playNote(gainNodes[--column], 0.3)
 , 300)
@@ -55,15 +55,15 @@ gainNodes = for freq in freqs
     gainNode.connect(context.destination)
     gainNode
 
-bb.on("buttonDown", (point) ->
-  [column, row] = point
-  if row > 1
-    bounceHeights[column] = row
-    currentHeights[column] = row
+bb.on("buttonDown", (button) ->
+  if button.row > 1
+    bounceHeights[button.column] = button.row
+    currentHeights[button.column] = button.row
   else
-    bounceHeights[column] = 0
-    currentHeights[column] = 0
-    bb.setLightState([column, row], false) for row in [1..size]
+    bounceHeights[button.column] = 0
+    currentHeights[button.column] = 0
+
+    bb.getButton(button.column, row).setLightState(false) for row in [1..size]
 )
 
 
