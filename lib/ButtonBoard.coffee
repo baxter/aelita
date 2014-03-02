@@ -1,6 +1,7 @@
 class ButtonBoard
-  constructor: (elem, size) ->
+  constructor: (elem, @size) ->
     @listeners = {}
+    @buttons = new Array @size * @size
     @container = document.createElement("div")
     elem.appendChild(@container)
     @container.classList.add("buttonBoard")
@@ -13,30 +14,48 @@ class ButtonBoard
 
   makeButton: (column, row) ->
     div = document.createElement("div")
-    div.addEventListener("mousedown", @emit.bind(this, "buttonDown", [column, row]))
-    div.addEventListener("mouseup", @emit.bind(this, "buttonUp", [column, row]))
+    idx = @_getButtonIndex column, row
+    div.addEventListener("mousedown", @emit.bind(this, "buttonDown", div))
+    div.addEventListener("mouseup", @emit.bind(this, "buttonUp", div))
+    div._aelita = on: false, idx: idx, row: row, column: column
+    @buttons[idx] = div
     div
+
+  getEncodedLights: ->
+    @buttons.reduce (encoded, div) ->
+      encoded += if div._aelita.on then 1 else 0
+    , ""
+
+  initaliseLights: (encodedLightStr) ->
+    for l, i in encodedLightStr.split ""
+      btn = @buttons[(i % @size) + Math.floor(i / @size) * @size]
+      if l == "1"
+        btn._aelita.on = true
+        btn.classList.add "lit"
+      else
+        btn._aelita.on = false
+        btn.classList.remove "lit"
+    true
 
   setLightStates: (matrixOfLights) ->
     for row, rowNumber in matrixOfLights
       do(row, rowNumber) ->
         @setLightState([rowNumber, columnNumber], lightState) for lightState,columnNumber in row
 
-  setLightState: (point, lightState) ->
-    button = @_getButton(point)
+  setLightState: (button, lightState) ->
     if lightState
       button.classList.add("lit")
     else
       button.classList.remove("lit")
 
-  getLightState: (point) ->
-    button = @_getButton(point)
+  getLightState: (button) ->
     button.classList.contains("lit")
 
-  _getButton: (point) ->
-    [column, row] = point
-    @container.children[--row].children[--column]
+  _getButton: (column, row) ->
+    @buttons[@_getButtonIndex column, row]
 
+  _getButtonIndex: (column, row) ->
+    --column + --row * @size
 
   on: (eventName, listener) ->
     @listeners[eventName] ||= []
