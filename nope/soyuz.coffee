@@ -3,25 +3,17 @@ size = 16
 bb = new window.ButtonBoard(document.body, size)
 scale = new window.PentatonicScale()
 
-onNotes = {};
-
 activeColumn = size # This is unintuitive but the tick will set the 2nd column to be active if the activeColumn is set to 1
 
 tick = ->
   for row in [1..size]
-    do (row) ->
-      if !buttonActive([activeColumn, row])
-        bb.setLightState([activeColumn, row], false)
+    button = bb.getButton activeColumn, row
+    button.setLightState(false) unless button.on
   activeColumn = (activeColumn % size ) + 1
   for row in [1..size]
-    do (row) ->
-      bb.setLightState([activeColumn, row], true)
-      if buttonActive([activeColumn, row])
-        playNote(gainNodes[--row], 0.3)
-
-buttonActive = (point) ->
-  pointString = point.toString()
-  onNotes[pointString]
+    button = bb.getButton activeColumn, row
+    button.setLightState(true)
+    playNote(gainNodes[row - 1], 0.3) if button.on
 
 playNote = (gainNode, duration) ->
   gainNode.gain.setValueAtTime(0, context.currentTime)
@@ -45,13 +37,15 @@ gainNodes = for freq in scale.frequencies(size).reverse()
     gainNode.connect(context.destination)
     gainNode
 
-bb.on "buttonDown", (point) ->
-  if buttonActive(point)
-    onNotes[point.toString()] = false
-    if activeColumn != point[0]
-      bb.setLightState(point, false)
+bb.on "buttonDown", (button) ->
+  if button.on
+    button.on = false
+    button.setLightState false if activeColumn != button.column
   else
-    onNotes[point.toString()] = true
-    bb.setLightState(point, true)
+    button.on = true
+    button.setLightState true
+  window.location.hash = bb.getEncodedLights()
+
+bb.initaliseLights window.location.hash.substring 1 if window.location.hash
 
 setInterval tick, 300
